@@ -26,8 +26,20 @@ class User
     self.recipe_card.max_by {|card| card.date}
   end
 
-  def self.top_3_recipes
-    RecipeCard.all.max_by(3) {|card| card.rating}
+  def top_3_recipes
+    self.recipe_card.max_by(3) {|card| card.rating}.map {|card| card.recipe}
+  end
+
+  def allergens
+    Allergen.all.select{|allergen| allergen.user == self}.map {|allergen|allergen.ingredient}.uniq
+  end
+
+  def safe_recipes
+     Recipe.all.select do |recipe|
+      recipe.ingredients.none? do |ingredient|
+        self.allergens.include?(ingredient)
+      end
+    end
   end
 
   def self.all
