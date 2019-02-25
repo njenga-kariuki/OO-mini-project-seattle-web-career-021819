@@ -31,6 +31,10 @@ class Recipe
     end
   end
 
+  def ingredients
+    RecipeIngredient.all.select {|recipe_ingredient| recipe_ingredient.recipe == self}.map {|ri| ri.ingredient}
+  end
+
   def add_ingredients(ingredients)
     ingredients.each do |ingredient|
       RecipeIngredient.new(self, ingredient)
@@ -48,7 +52,7 @@ class Recipe
 
     Allergen.all.select do |allergen|
       recipe_ingredients.include?(allergen.ingredient)
-    end
+    end.uniq
   end
 
   def self.all
